@@ -1,0 +1,48 @@
+enum Role {
+  USER
+  SUPERVISOR
+  ADMIN
+
+  @@map("roles")
+}
+
+enum MessageDirection {
+  SENT     @map("sent")
+  RECEIVED @map("received")
+
+  @@map("message_directions")
+}
+
+enum MessageStatus {
+  CONSUMED   @map("consumed")
+  DISPATCHED @map("dispatched")
+
+  @@map("message_status")
+}
+
+enum TicketStatus {
+  Waiting         @map("waiting")
+  InAttendance    @map("in_attendance")
+  ClosedAttendant @map("closed_attendant")
+  ClosedClient    @map("closed_client")
+  ClosedSystem    @map("closed_system")
+  Transferred     @map("transferred")
+
+  @@map("ticket_status")
+}
+
+enum ImportJobStatus {
+  PENDING   @map("pending")
+  RUNNING   @map("running")
+  COMPLETED @map("completed")
+  FAILED    @map("failed")
+  CANCELLED @map("cancelled")
+
+  @@map("import_job_status")
+}
+
+enum ImportLogType {
+  CONTACTS
+  ATTENDANTS
+  MESSAGES
+}

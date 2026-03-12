@@ -1,0 +1,83 @@
+model Ticket {
+  // ============================================
+  // IDENTIFICAÇÃO
+  // ============================================
+  id                 String  @id @default(uuid())
+  blipId             String  @unique @map("blip_id")
+  sequentialId       Int     @map("sequential_id")
+  parentSequentialId Int?    @map("parent_sequential_id")
+  externalId         String? @map("external_id")
+
+  // ============================================
+  // IDENTIDADES
+  // ============================================
+  ownerIdentity    String  @map("owner_identity")
+  customerIdentity String  @map("customer_identity")
+  customerDomain   String  @map("customer_domain")
+  agentIdentity    String? @map("agent_identity")
+  provider         String
+
+  // ============================================
+  // STATUS
+  // ============================================
+  status   TicketStatus
+  closed   Boolean      @default(false)
+  closedBy String?      @map("closed_by")
+
+  // ============================================
+  // ATENDIMENTO
+  // ============================================
+  team     String
+  rating   Int    @default(0)
+  priority Int    @default(0)
+
+  // ============================================
+  // DISTRIBUIÇÃO
+  // ============================================
+  isAutomaticDistribution Boolean? @map("is_automatic_distribution")
+  distributionType        String?  @map("distribution_type")
+
+  // ============================================
+  // DATAS
+  // ============================================
+  storageDate       DateTime  @map("storage_date")
+  statusDate        DateTime  @map("status_date")
+  openDate          DateTime? @map("open_date")
+  closeDate         DateTime? @map("close_date")
+  firstResponseDate DateTime? @map("first_response_date")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // ============================================
+  // AGREGAÇÕES
+  // ============================================
+  messageCount    Int       @default(0) @map("message_count")
+  lastMessageDate DateTime? @map("last_message_date")
+
+  // ============================================
+  // RELAÇÕES
+  // ============================================
+  contactId String    @map("contact_id")
+  contact   Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  // ============================================
+  // ÍNDICES
+  // ============================================
+  @@index([blipId])
+  @@index([sequentialId])
+  @@index([contactId])
+  @@index([ownerIdentity])
+  @@index([customerIdentity])
+  @@index([agentIdentity])
+  @@index([status])
+  @@index([closed])
+  @@index([team])
+  @@index([priority])
+  @@index([storageDate])
+  @@index([openDate])
+  @@index([closeDate])
+  @@index([lastMessageDate])
+  @@index([messageCount])
+  @@map("tickets")
+}

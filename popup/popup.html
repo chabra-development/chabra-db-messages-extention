@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chabra Tags</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <img src="../icons/icon48.png" alt="" width="20" height="20" />
+    <h1>Chabra Tags</h1>
+  </header>
+
+  <main>
+    <p class="hint dim" id="checking">Verificando...</p>
+
+    <section id="no-portal" hidden>
+      <p class="hint">
+        Acesse <a href="https://chabra.desk.blip.ai/" target="_blank">chabra.desk.blip.ai</a>
+        e abra um atendimento para gerenciar as tags.
+      </p>
+    </section>
+
+    <section id="contact-section" hidden>
+      <div class="info-row">
+        <span class="label">Contato ativo</span>
+        <span class="value" id="contact-display">—</span>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>v1.0.0</span>
+    <a href="https://chabra-db-messages.vercel.app" target="_blank">API</a>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

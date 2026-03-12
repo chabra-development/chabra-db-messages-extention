@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"/c/Users/Chabra/Documents/Dev/Extensão/db-messages/src\" -type f -name \"*.ts\" -o -name \"*.tsx\" | xargs grep -l \"api.*contact\\\\|contacts.*api\" | head -20)",
+      "Bash(find \"/c/Users/Chabra/Documents/Dev/Extensão/db-messages/src\" -type f \\\\\\( -name \"*.ts\" -o -name \"*.tsx\" \\\\\\) | xargs grep -l \"fetch.*contact\\\\|find.*contact\" | head -15)",
+      "Bash(find \"/c/Users/Chabra/Documents/Dev/Extensão/db-messages/src\" -type f -name \"*.ts\" | xargs grep -l \"identity\\\\|msging\\\\.net\\\\|blip\" | head -15)",
+      "Bash(find \"/c/Users/Chabra/Documents/Dev/Extensão/db-messages/src\" -name \"*.ts\" | xargs grep -l \"export.*async.*function\" | xargs grep -l \"contact\" | head -10)",
+      "Bash(ls -la /c/Users/Chabra/Documents/Dev/db-messages-main/src/app/api/tags/\\\\[id\\\\]/)",
+      "Bash(cat /c/Users/Chabra/Documents/Dev/db-messages-main/src/app/api/tags/\\\\[id\\\\]/route.ts)",
+      "Bash(node \"/c/Users/Chabra/Documents/Dev/Extensão/icons/generate-icons.js\")",
+      "mcp__ide__getDiagnostics",
+      "Bash(find \"C:/Users/Chabra/Documents/Dev/Extensão/db-messages/node_modules/.prisma/client\" -maxdepth 1 -type f 2>/dev/null; echo \"exit: $?\")",
+      "Bash(find \"C:/Users/Chabra/Documents/Dev/Extensão/db-messages/node_modules/zod\" -name \"index.d.ts\" -maxdepth 3 2>/dev/null; echo \"exit:$?\")",
+      "Bash(which bun:*)",
+      "Bash(cmd /c \"bun --version\" 2>/dev/null || cmd /c \"where bun\" 2>/dev/null || echo \"BUN NOT FOUND\")",
+      "Bash(cmd /c \"cd /d C:\\\\Users\\\\Chabra\\\\Documents\\\\Dev\\\\Extensão\\\\db-messages && bun --version 2>&1\")",
+      "Bash(cmd /c \"bun --version\" 2>&1 || echo \"failed\")",
+      "Bash(powershell -Command \"bun --version\" 2>&1 || echo \"bun not found\")",
+      "Bash(powershell -Command \"npm --version; node --version\" 2>&1)",
+      "Bash(powershell -Command \"Get-Command bun -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source\" 2>&1)",
+      "Bash(powershell -Command \"Test-Path '$env:USERPROFILE\\\\.bun\\\\bin\\\\bun.exe'\" 2>&1)",
+      "Bash(powershell -Command \"ls $HOME\\\\.bun 2>&1\")",
+      "Bash(powershell -Command \"& { ls 'C:\\\\Users\\\\Chabra\\\\.bun' }\" 2>&1)",
+      "Bash(cd \"C:/Users/Chabra/Documents/Dev/Extensão/db-messages\" && npm install 2>&1 | tail -5)",
+      "Bash(cd \"C:/Users/Chabra/Documents/Dev/Extensão/db-messages\" && npx prisma generate --schema=./prisma/schema 2>&1)",
+      "Bash(cd \"C:/Users/Chabra/Documents/Dev/Extensão/db-messages\" && node_modules/.bin/prisma generate --schema=./prisma/schema 2>&1)",
+      "Bash(powershell -Command \"Set-Location 'C:\\\\Users\\\\Chabra\\\\Documents\\\\Dev\\\\Extensão\\\\db-messages'; node node_modules/prisma/build/index.js generate --schema=./prisma/schema 2>&1\")",
+      "Bash(ls \"C:/Users/Chabra/Documents/Dev/Extensão/db-messages/.env\"* 2>/dev/null || echo \"NO .ENV\")",
+      "Bash(powershell -Command \"\n  \\\\$env:DIRECT_URL = 'postgresql://dummy:dummy@dummy:5432/dummy'\n  \\\\$env:DATABASE_URL = 'postgresql://dummy:dummy@dummy:5432/dummy'\n  Set-Location 'C:\\\\Users\\\\Chabra\\\\Documents\\\\Dev\\\\Extensão\\\\db-messages'\n  node node_modules/prisma/build/index.js generate --schema=./prisma/schema 2>&1\n\")",
+      "Bash(ls \"C:/Users/Chabra/Documents/Dev/Extensão/db-messages/.env\"* 2>/dev/null && echo \"FOUND\" || echo \"NOT FOUND\")",
+      "Bash(ls \"C:/Users/Chabra/Documents/Dev/Extensão/db-messages/.env.local\" 2>/dev/null || ls \"C:/Users/Chabra/Documents/Dev/Extensão/db-messages/env\"* 2>/dev/null || find \"C:/Users/Chabra/Documents/Dev/Extensão/db-messages\" -maxdepth 1 -name \"*env*\" 2>/dev/null)",
+      "Bash(powershell -Command \"Get-ChildItem -Path 'C:\\\\Users\\\\Chabra\\\\Documents\\\\Dev\\\\Extensão\\\\db-messages' -Force -Filter '*env*' | Select-Object Name\")",
+      "Bash(powershell -Command \"Get-ChildItem -Path 'C:\\\\Users\\\\Chabra\\\\Documents\\\\Dev\\\\Extensão\\\\db-messages' -Force | Select-Object Name\")",
+      "Bash(powershell -Command \"& { cd 'C:\\\\Users\\\\Chabra\\\\Documents\\\\Dev\\\\Extensão\\\\db-messages'; npx vercel env pull .env.local 2>&1 }\")",
+      "Bash(powershell -Command \"& { \\(Invoke-WebRequest -Uri 'https://chabra-db-messages.vercel.app/api/tags?take=3' -UseBasicParsing\\).StatusCode }\" 2>&1)",
+      "Bash(powershell -Command \"& {\n  \\\\$body = '{\\\\\"tagIds\\\\\": []}'\n  \\\\$r = Invoke-WebRequest -Uri 'https://chabra-db-messages.vercel.app/api/tags/test%40wa.gw.msging.net' -Method PUT -Body \\\\$body -ContentType 'application/json' -UseBasicParsing -ErrorAction SilentlyContinue\n  \\\\$r.StatusCode; \\\\$r.Content\n}\" 2>&1)",
+      "Bash(powershell -Command \"& {\n  try {\n    \\\\$body = '{\\\\\"tagIds\\\\\": []}'\n    \\\\$r = Invoke-WebRequest -Uri 'https://chabra-db-messages.vercel.app/api/tags/test%40wa.gw.msging.net' -Method PUT -Body \\\\$body -ContentType 'application/json' -UseBasicParsing\n    \\\\$r.Content\n  } catch {\n    \\\\$_.Exception.Response.StatusCode.Value__\n    \\\\$reader = [System.IO.StreamReader]::new\\(\\\\$_.Exception.Response.GetResponseStream\\(\\)\\)\n    \\\\$reader.ReadToEnd\\(\\)\n  }\n}\" 2>&1)",
+      "Bash(powershell -Command \"& {\n  try {\n    \\\\$body = '{\\\\\"tagIds\\\\\": [\\\\\"123e4567-e89b-12d3-a456-426614174000\\\\\"]}'\n    \\\\$r = Invoke-WebRequest -Uri 'https://chabra-db-messages.vercel.app/api/tags/test%40wa.gw.msging.net' -Method PUT -Body \\\\$body -ContentType 'application/json' -UseBasicParsing\n    \\\\$r.Content\n  } catch {\n    \\\\$_.Exception.Response.StatusCode.Value__\n    \\\\$reader = [System.IO.StreamReader]::new\\(\\\\$_.Exception.Response.GetResponseStream\\(\\)\\)\n    \\\\$reader.ReadToEnd\\(\\)\n  }\n}\" 2>&1)",
+      "Bash(powershell -Command \"& {\n  try {\n    \\\\$body = '{\\\\\"tags\\\\\": [\\\\\"teste\\\\\"]}'\n    \\\\$r = Invoke-WebRequest -Uri 'https://chabra-db-messages.vercel.app/api/tags' -Method POST -Body \\\\$body -ContentType 'application/json' -UseBasicParsing\n    \\\\$r.StatusCode; \\\\$r.Content\n  } catch {\n    \\\\$_.Exception.Response.StatusCode.Value__\n    \\\\$reader = [System.IO.StreamReader]::new\\(\\\\$_.Exception.Response.GetResponseStream\\(\\)\\)\n    \\\\$reader.ReadToEnd\\(\\)\n  }\n}\" 2>&1)"
+    ]
+  }
+}

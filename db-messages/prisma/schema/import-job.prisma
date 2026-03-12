@@ -1,0 +1,40 @@
+model ImportJob {
+  // ============================================
+  // IDENTIFICAÇÃO
+  // ============================================
+  id String @id @default(uuid())
+
+  // ============================================
+  // PROGRESSO
+  // ============================================
+  total       Int
+  processed   Int    @default(0)
+  succeeded   Int    @default(0)
+  failedCount Int    @default(0) @map("failed_count")
+  failed      Json[] @default([])
+  metadata    Json?
+
+  // ============================================
+  // STATUS
+  // ============================================
+  status ImportJobStatus @default(PENDING)
+
+  // ============================================
+  // DATAS
+  // ============================================
+  startedAt   DateTime? @map("started_at")
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // ============================================
+  // RELAÇÕES
+  // ============================================
+
+  // ============================================
+  // ÍNDICES
+  // ============================================
+  @@index([status])
+  @@index([createdAt])
+  @@map("import_jobs")
+}

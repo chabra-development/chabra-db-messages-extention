@@ -1,0 +1,43 @@
+model Message {
+  // ============================================
+  // IDENTIFICAÇÃO
+  // ============================================
+  id     String @id @default(uuid())
+  blipId String @unique @map("blip_id")
+
+  // ============================================
+  // CONTEÚDO
+  // ============================================
+  direction MessageDirection
+  type      String
+  content   Json
+  status    MessageStatus
+  metadata  Json?
+
+  // ============================================
+  // DATAS
+  // ============================================
+  sentAt    DateTime @map("sent_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // ============================================
+  // RELAÇÕES
+  // ============================================
+  contactId String  @map("contact_id")
+  ticketId  String? @map("ticket_id")
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  ticket    Ticket? @relation(fields: [ticketId], references: [id], onDelete: SetNull)
+
+  // ============================================
+  // ÍNDICES
+  // ============================================
+  @@index([blipId])
+  @@index([contactId])
+  @@index([ticketId])
+  @@index([direction])
+  @@index([type])
+  @@index([sentAt])
+  @@index([contactId, sentAt])
+  @@index([ticketId, sentAt])
+  @@map("messages")
+}

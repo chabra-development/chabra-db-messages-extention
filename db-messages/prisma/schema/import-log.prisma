@@ -1,0 +1,14 @@
+model ImportLog {
+    id          String        @id @default(uuid())
+    type        ImportLogType
+    total       Int
+    succeeded   Int
+    failed      Int
+    duration    Int // em milissegundos
+    payloadSize Int           @map("pay_load_size") // em bytes
+    createdAt   DateTime      @default(now()) @map("created_at")
+
+    @@index([type])
+    @@index([createdAt])
+    @@map("import_logs")
+}

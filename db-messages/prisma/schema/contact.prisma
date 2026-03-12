@@ -1,0 +1,102 @@
+model Contact {
+  // ============================================
+  // IDENTIFICAÇÃO
+  // ============================================
+  id          String  @id @default(uuid())
+  identity    String  @unique
+  name        String
+  source      String
+  phoneNumber String? @map("phone_number")
+  email       String?
+  taxDocument String? @map("tax_document")
+  group       String?
+  extras      Json?
+
+  // ============================================
+  // AGREGAÇÕES
+  // ============================================
+  messageCount Int @default(0) @map("message_count")
+
+  // ============================================
+  // DATAS
+  // ============================================
+  lastMessageDate DateTime? @map("last_message_date")
+  lastUpdateDate  DateTime? @map("last_update_date")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // ============================================
+  // RELAÇÕES
+  // ============================================
+  messages    Message[]
+  tickets     Ticket[]
+  tags        ContactTag[]
+  preferences ContactUserPreference[]
+
+  // ============================================
+  // ÍNDICES
+  // ============================================
+  @@index([phoneNumber])
+  @@index([email])
+  @@index([source])
+  @@index([name])
+  @@index([name, source])
+  @@index([lastMessageDate])
+  @@index([messageCount])
+  @@index([createdAt])
+  @@map("contacts")
+}
+
+// ============================================
+// TAG — Global (qualquer usuário pode ver)
+// ============================================
+model Tag {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  color     String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  createdById String? @map("created_by_id")
+
+  contacts ContactTag[]
+
+  @@index([name])
+  @@map("tags")
+}
+
+model ContactTag {
+  contactId String  @map("contact_id")
+  tagId     String  @map("tag_id")
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([contactId, tagId])
+  @@map("contact_tags")
+}
+
+// ============================================
+// PREFERÊNCIAS — Por usuário (pin e favorite)
+// ============================================
+model ContactUserPreference {
+  id          String    @id @default(uuid())
+  pinned      Boolean   @default(false)
+  favorite    Boolean   @default(false)
+  pinnedAt    DateTime? @map("pinned_at")
+  favoritedAt DateTime? @map("favorited_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  contactId String  @map("contact_id")
+  userId    String  @map("user_id")
+  contact   Contact @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, userId])
+  @@index([userId])
+  @@index([contactId])
+  @@index([pinned])
+  @@index([favorite])
+  @@index([userId, pinned])
+  @@index([userId, favorite])
+  @@map("contact_user_preferences")
+}

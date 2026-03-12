@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--
+  Abra este arquivo no Chrome, clique em "Gerar", e salve cada canvas como PNG
+  com os nomes: icon16.png, icon48.png, icon128.png
+  Coloque os arquivos nesta mesma pasta icons/
+-->
+<html>
+<body style="font-family:sans-serif;padding:20px">
+  <h2>Gerador de ícones — Chabra Tags</h2>
+  <div id="canvases" style="display:flex;gap:16px;align-items:flex-end;margin:20px 0"></div>
+  <button onclick="generate()">Gerar ícones</button>
+  <p style="margin-top:12px;color:#666;font-size:13px">
+    Clique com botão direito em cada canvas → "Salvar imagem como..."
+  </p>
+
+  <script>
+    function drawIcon(size) {
+      const canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      canvas.title = `icon${size}.png`;
+      canvas.style.cursor = "pointer";
+
+      const ctx = canvas.getContext("2d");
+      const r = size * 0.12;
+
+      // Fundo azul
+      ctx.fillStyle = "#2563eb";
+      ctx.beginPath();
+      ctx.roundRect(0, 0, size, size, r);
+      ctx.fill();
+
+      // Letra "T" branca
+      ctx.fillStyle = "#ffffff";
+      ctx.font = `bold ${size * 0.62}px sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("T", size / 2, size * 0.54);
+
+      const label = document.createElement("div");
+      label.textContent = `${size}×${size}`;
+      label.style.cssText = "font-size:11px;color:#666;text-align:center;margin-top:4px";
+
+      const wrap = document.createElement("div");
+      wrap.appendChild(canvas);
+      wrap.appendChild(label);
+      document.getElementById("canvases").appendChild(wrap);
+    }
+
+    function generate() {
+      document.getElementById("canvases").innerHTML = "";
+      [16, 48, 128].forEach(drawIcon);
+    }
+
+    generate();
+  </script>
+</body>
+</html>
