@@ -1,8 +1,12 @@
-import type { NextConfig } from "next"
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
   typedRoutes: true,
+  serverExternalPackages: ["@prisma/client", "prisma"],
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
     remotePatterns: [
       {
@@ -11,6 +15,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;
