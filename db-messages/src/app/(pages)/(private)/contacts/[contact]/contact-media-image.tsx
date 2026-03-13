@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Spinner } from "@/components/ui/spinner"
 import { useDownloadFile } from "@/hooks/use-download-file"
 import { cn } from "@/lib/utils"
-import { MessageDirection } from "@prisma/client"
+import { MessageDirection } from "@/constants/prisma-enums"
 import { formatDate } from "date-fns"
 import { ArrowDownToLine, Download } from "lucide-react"
 import Image from "next/image"

@@ -17,7 +17,7 @@ import { getTextColorFromBackground } from "@/functions/get-text-color-from-back
 import { cn } from "@/lib/utils"
 import { createTagsObjetc, CreateTagsProps, createTagsSchema } from "@/schemas/create-tags-schema"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Tag } from "@prisma/client"
+import type { Tag } from "@prisma/client"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { X } from "lucide-react"

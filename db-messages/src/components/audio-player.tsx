@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import {
     AudioPlayerButton,
@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter } from "@/components/ui/card"
 import { useDownloadFile } from "@/hooks/use-download-file"
 import { cn } from "@/lib/utils"
-import { MessageDirection } from "@prisma/client"
+import { MessageDirection } from "@/constants/prisma-enums"
 import { formatDate } from "date-fns"
 import { Download, Loader2 } from "lucide-react"
 

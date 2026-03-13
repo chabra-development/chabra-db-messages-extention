@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
-import { User } from "@prisma/client"
+import type { User } from "@prisma/client"
 import { motion } from "framer-motion"
 import { ChangeRoleUserDialog } from "./change-role-attendants"
 

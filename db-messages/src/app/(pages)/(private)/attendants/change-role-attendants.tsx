@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Spinner } from "@/components/ui/spinner"
 import { queryClient } from "@/providers/theme-provider"
-import { User } from "@prisma/client"
+import type { User } from "@prisma/client"
 import { useMutation } from "@tanstack/react-query"
 import { Ellipsis } from "lucide-react"
 import { useState } from "react"

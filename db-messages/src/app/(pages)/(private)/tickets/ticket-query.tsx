@@ -16,7 +16,7 @@ import {
 import { InputGroup } from "@/components/ui/input-group"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { authClient } from "@/lib/auth-client"
-import { User } from "@prisma/client"
+import type { User } from "@prisma/client"
 import { useQuery } from "@tanstack/react-query"
 import { useSearchParams } from "next/navigation"
 import { TicketInfoSheet } from "./ticket-info-sheet"

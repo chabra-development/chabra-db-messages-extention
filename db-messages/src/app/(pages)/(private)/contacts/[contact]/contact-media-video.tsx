@@ -1,6 +1,6 @@
 import { Card, CardDescription } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { MessageDirection } from "@prisma/client"
+import { MessageDirection } from "@/constants/prisma-enums"
 import { formatDate } from "date-fns"
 import dynamic from "next/dynamic"
 

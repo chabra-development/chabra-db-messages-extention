@@ -1,6 +1,6 @@
 "use client"
 
-import { User } from "@prisma/client"
+import type { User } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { AttendantRow } from "."
 import { ChangeRoleUserDialog } from "../change-role-attendants"

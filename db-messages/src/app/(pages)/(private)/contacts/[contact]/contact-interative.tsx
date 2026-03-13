@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 import {
     LimeInteractiveReplyButton
 } from "@/types/lime-thread-messages-response.types"
-import { MessageDirection } from "@prisma/client"
+import { MessageDirection } from "@/constants/prisma-enums"
 import { formatDate } from "date-fns"
 
 export const ContactInterative = ({

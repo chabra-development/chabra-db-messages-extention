@@ -6,7 +6,7 @@ import { Phone } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card"
-import { Contact } from "@prisma/client"
+import type { Contact } from "@prisma/client"
 
 interface ContactCardItemProps {
     contact: Contact

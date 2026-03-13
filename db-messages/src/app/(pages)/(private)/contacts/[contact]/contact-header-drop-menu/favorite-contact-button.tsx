@@ -3,7 +3,7 @@ import { toast } from "@/components/toast"
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 import { queryClient } from "@/providers/theme-provider"
-import { ContactUserPreference } from "@prisma/client"
+import type { ContactUserPreference } from "@prisma/client"
 import { useMutation } from "@tanstack/react-query"
 import { Heart, HeartMinus } from "lucide-react"
 

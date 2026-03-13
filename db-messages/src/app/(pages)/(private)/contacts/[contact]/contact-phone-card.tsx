@@ -9,7 +9,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { LimeContactPayload } from "@/types/lime-thread-messages-response.types"
-import { MessageDirection } from "@prisma/client"
+import { MessageDirection } from "@/constants/prisma-enums"
 import { formatDate } from "date-fns"
 import { Copy, Phone } from "lucide-react"
 import { toast } from "sonner"

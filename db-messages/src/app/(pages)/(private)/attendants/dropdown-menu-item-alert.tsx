@@ -34,7 +34,7 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { queryClient } from "@/providers/theme-provider"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Role, User } from "@prisma/client"
+import type { Role, User } from "@prisma/client"
 import { useMutation } from "@tanstack/react-query"
 import { Eye, EyeClosed } from "lucide-react"
 import { ReactNode, useState } from "react"

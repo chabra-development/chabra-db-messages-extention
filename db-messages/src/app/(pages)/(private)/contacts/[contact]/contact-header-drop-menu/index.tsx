@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Spinner } from "@/components/ui/spinner"
 import { authClient } from "@/lib/auth-client"
-import { ContactUserPreference } from "@prisma/client"
+import type { ContactUserPreference } from "@prisma/client"
 import { useMutationState, useQuery } from "@tanstack/react-query"
 import { Bookmark, MoreVertical } from "lucide-react"
 import { RefObject, useState } from "react"

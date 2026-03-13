@@ -10,7 +10,7 @@ import {
 import { generateVideoThumbnail } from "@/functions/generate-video-thumbnail"
 import { stringToHTML } from "@/functions/string-to-HTML"
 import { cn } from "@/lib/utils"
-import { MessageDirection } from "@prisma/client"
+import { MessageDirection } from "@/constants/prisma-enums"
 import { formatDate } from "date-fns"
 import { FileImage, FileVideo } from "lucide-react"
 import Image from "next/image"

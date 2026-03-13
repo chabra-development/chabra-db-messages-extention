@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription } from "@/components/ui/card"
 import { isUnknownContent } from "@/guards/lime-thread-messages.guards"
 import { cn } from "@/lib/utils"
-import { Message } from "@prisma/client"
+import type { Message } from "@prisma/client"
 import { MessageRenderer } from "./message-renderer"
 import { SystemInfoDate } from "./system-info-date"
 

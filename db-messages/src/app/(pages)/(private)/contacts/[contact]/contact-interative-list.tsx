@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 import { formatDate } from "date-fns"
 import { ContactInterativeListRow } from "./contact-interative-list-row"
 import { stringToHTML } from "@/functions/string-to-HTML"
-import { MessageDirection } from "@prisma/client"
+import { MessageDirection } from "@/constants/prisma-enums"
 
 type ContactInterativeListProps = {
     direction: MessageDirection

@@ -10,7 +10,7 @@ import {
 import { stringToHTML } from "@/functions/string-to-HTML"
 import { cn } from "@/lib/utils"
 import { LimeSelectContent } from "@/types/lime-thread-messages-response.types"
-import { MessageDirection } from "@prisma/client"
+import { MessageDirection } from "@/constants/prisma-enums"
 import { formatDate } from "date-fns"
 
 export const ContactScopeAvaliation = ({

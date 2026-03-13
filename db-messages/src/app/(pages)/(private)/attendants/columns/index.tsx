@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { Role, User } from "@prisma/client"
+import type { Role, User } from "@prisma/client"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react"
 import { AvatarColumn } from "./avatar"
