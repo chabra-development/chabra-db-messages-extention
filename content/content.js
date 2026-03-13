@@ -332,13 +332,17 @@ async function addTag(identity, tag) {
 async function createAndAdd(identity, name, color) {
   setDetailError(null);
 
-  const searchRes = await api("SEARCH_TAGS", { query: name });
-  const existing  = searchRes.ok
-    ? (searchRes.data ?? []).find((t) => t.name.toLowerCase() === name)
-    : null;
+  // Sem cor: fluxo normal (busca existente → addTag)
+  if (!color) {
+    const searchRes = await api("SEARCH_TAGS", { query: name });
+    const existing  = searchRes.ok
+      ? (searchRes.data ?? []).find((t) => t.name.toLowerCase() === name)
+      : null;
+    if (existing) { await addTag(identity, existing); return; }
+  }
 
-  if (existing) { await addTag(identity, existing); return; }
-
+  // Com cor (ou tag inexistente sem cor): upsert garante que a cor é salva
+  // mesmo se a tag já existia sem cor
   const createRes = await api("CREATE_TAG", { name, ...(color ? { color } : {}) });
   if (!createRes.ok) { setDetailError(createRes.error); return; }
 
@@ -348,10 +352,23 @@ async function createAndAdd(identity, name, color) {
 
   if (!created?.id) { setDetailError("Erro ao criar tag."); return; }
 
-  // Garantir cor no objeto local mesmo que o servidor retorne sem ela
+  // Forçar cor no objeto local — o servidor pode retornar null
+  // se ainda houver lag de propagação no banco
   if (color) created.color = color;
 
-  await addTag(identity, created);
+  // Atualizar estado local diretamente (sem re-fetch) para preservar a cor
+  if (currentTags.some((t) => t.id === created.id)) return;
+  const newTagIds = [...currentTags.map((t) => t.id), created.id];
+  const { ok, error } = await api("SET_CONTACT_TAGS", {
+    contactIdentity: identity,
+    tagIds: newTagIds,
+  });
+  if (!ok) { setDetailError(error); return; }
+
+  currentTags = [...currentTags, created];
+  tagsCache.set(identity, currentTags);
+  renderDetailChips(currentTags);
+  refreshSidebarCard(identity);
 }
 
 const PRESET_COLORS = [
