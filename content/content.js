@@ -28,10 +28,14 @@ const DETAIL_ANCHORS = [
   ".drawer-content",
 ];
 
-// Sidebar
-const SIDEBAR_CARD_SEL  = ".w-100.ss-container.tabs-list-content";
+// Sidebar — atendimentos ativos
+const SIDEBAR_CARD_SEL  = ".w-100.ss-container.tabs-list-content .pa2";
 const CHAT_LIST_SEL     = ".chat-list";
 const SIDEBAR_DONE_ATTR = "data-ct-done";
+
+// Sidebar — fila de espera
+const WAITING_CARD_SEL  = ".chat-list-item.ticket-list-item";
+const WAITING_DONE_ATTR = "data-ct-waiting-done";
 
 // ─── Estado global ────────────────────────────────────────────────────────────
 
@@ -47,17 +51,27 @@ const tagsCache = new Map(); // identity → Tag[]
 init();
 
 function init() {
-  // Um único observer no body chama os três pontos de injeção
-  new MutationObserver(() => {
+  let debounceTimer = null;
+
+  // Debounce: aguarda 150ms sem mutações antes de processar,
+  // evitando o freeze causado por rafagas de mutações do Blip Desk.
+  new MutationObserver((mutations) => {
     if (_writing) return;
-    attachDrawer();
-    attachHeader();
-    processSidebarCards();
+    const hasNodes = mutations.some(m => m.addedNodes.length || m.removedNodes.length);
+    if (!hasNodes) return;
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      attachDrawer();
+      attachHeader();
+      processSidebarCards();
+      processWaitingCards();
+    }, 150);
   }).observe(document.body, { childList: true, subtree: true });
 
   attachDrawer();
   attachHeader();
   processSidebarCards();
+  processWaitingCards();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -107,19 +121,19 @@ function mountDetailPanel(drawer, identity) {
   _writing = true;
   removeDetailPanel();
 
-  // Tentar âncoras conhecidas; fallback: append no próprio drawer
+  // Tentar âncoras conhecidas; fallback: prepend no próprio drawer
   let anchor = null;
   for (const sel of DETAIL_ANCHORS) {
-    const els = drawer.querySelectorAll(sel);
-    if (els.length) { anchor = els[els.length - 1]; break; }
+    const el = drawer.querySelector(sel);
+    if (el) { anchor = el; break; }
   }
 
   const panel = buildDetailPanel(identity);
 
   if (anchor) {
-    anchor.insertAdjacentElement("afterend", panel);
+    anchor.insertAdjacentElement("beforebegin", panel);
   } else {
-    drawer.appendChild(panel);
+    drawer.prepend(panel);
   }
 
   _writing = false;
@@ -218,9 +232,10 @@ function buildDetailPanel(identity) {
     btn.textContent = body.hidden ? "+" : "−";
   });
 
-  const input    = panel.querySelector("#ct-input");
-  const dropdown = panel.querySelector("#ct-dropdown");
-  let debounce   = null;
+  const input           = panel.querySelector("#ct-input");
+  const dropdown        = panel.querySelector("#ct-dropdown");
+  const autocompleteWrap = panel.querySelector(".ct-autocomplete-wrap");
+  let debounce          = null;
 
   input.addEventListener("input", () => {
     clearTimeout(debounce);
@@ -236,7 +251,7 @@ function buildDetailPanel(identity) {
       const active = dropdown.querySelector(".ct-option.active");
       if (active) { active.click(); return; }
       const name = input.value.trim().toLowerCase();
-      if (name) { hideDropdown(dropdown); input.value = ""; createAndAdd(identity, name); }
+      if (name) { hideDropdown(dropdown); input.value = ""; showColorPicker(autocompleteWrap, name, identity); }
     }
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       navigateDropdown(dropdown, e.key === "ArrowDown" ? 1 : -1);
@@ -314,7 +329,7 @@ async function addTag(identity, tag) {
   await loadDetailTags(identity);
 }
 
-async function createAndAdd(identity, name) {
+async function createAndAdd(identity, name, color) {
   setDetailError(null);
 
   const searchRes = await api("SEARCH_TAGS", { query: name });
@@ -324,7 +339,7 @@ async function createAndAdd(identity, name) {
 
   if (existing) { await addTag(identity, existing); return; }
 
-  const createRes = await api("CREATE_TAG", { name });
+  const createRes = await api("CREATE_TAG", { name, ...(color ? { color } : {}) });
   if (!createRes.ok) { setDetailError(createRes.error); return; }
 
   const created = Array.isArray(createRes.data)
@@ -332,7 +347,80 @@ async function createAndAdd(identity, name) {
     : createRes.data;
 
   if (!created?.id) { setDetailError("Erro ao criar tag."); return; }
+
+  // Garantir cor no objeto local mesmo que o servidor retorne sem ela
+  if (color) created.color = color;
+
   await addTag(identity, created);
+}
+
+const PRESET_COLORS = [
+  "#ef4444", "#f97316", "#eab308", "#22c55e",
+  "#06b6d4", "#3b82f6", "#8b5cf6", "#ec4899", "#6b7280",
+];
+
+function showColorPicker(wrap, name, identity) {
+  wrap.querySelector(".ct-color-picker")?.remove();
+
+  let selectedColor = "";
+
+  const picker = document.createElement("div");
+  picker.className = "ct-color-picker";
+
+  const label = document.createElement("span");
+  label.className = "ct-color-label";
+  label.textContent = `Cor para "${name}":`;
+
+  const swatches = document.createElement("div");
+  swatches.className = "ct-swatches";
+
+  const noneBtn = document.createElement("button");
+  noneBtn.className = "ct-swatch ct-swatch--none ct-swatch--active";
+  noneBtn.title = "Sem cor";
+  noneBtn.textContent = "∅";
+  noneBtn.addEventListener("click", () => {
+    selectedColor = "";
+    swatches.querySelectorAll(".ct-swatch").forEach((s) => s.classList.remove("ct-swatch--active"));
+    noneBtn.classList.add("ct-swatch--active");
+  });
+  swatches.appendChild(noneBtn);
+
+  PRESET_COLORS.forEach((color) => {
+    const btn = document.createElement("button");
+    btn.className = "ct-swatch";
+    btn.style.background = color;
+    btn.title = color;
+    btn.addEventListener("click", () => {
+      selectedColor = color;
+      swatches.querySelectorAll(".ct-swatch").forEach((s) => s.classList.remove("ct-swatch--active"));
+      btn.classList.add("ct-swatch--active");
+    });
+    swatches.appendChild(btn);
+  });
+
+  const actions = document.createElement("div");
+  actions.className = "ct-color-actions";
+
+  const cancelBtn = document.createElement("button");
+  cancelBtn.className = "ct-color-cancel";
+  cancelBtn.textContent = "Cancelar";
+  cancelBtn.addEventListener("click", () => picker.remove());
+
+  const confirmBtn = document.createElement("button");
+  confirmBtn.className = "ct-color-confirm";
+  confirmBtn.textContent = "Criar tag";
+  confirmBtn.addEventListener("click", () => {
+    picker.remove();
+    createAndAdd(identity, name, selectedColor || undefined);
+  });
+
+  actions.appendChild(cancelBtn);
+  actions.appendChild(confirmBtn);
+
+  picker.appendChild(label);
+  picker.appendChild(swatches);
+  picker.appendChild(actions);
+  wrap.appendChild(picker);
 }
 
 async function removeTag(identity, tagId) {
@@ -404,6 +492,37 @@ function processSidebarCards() {
   });
 }
 
+/**
+ * Varre os cards da fila "Aguardando Atendimento" e injeta tags nos não processados.
+ * Usa exclusivamente extractIdentity() (sem Vue) pois a instância Vue dessa lista
+ * ainda não foi mapeada.
+ */
+function processWaitingCards() {
+  const cards = [...document.querySelectorAll(WAITING_CARD_SEL)];
+  if (!cards.length) return;
+
+  cards.forEach((card) => {
+    const identity = extractIdentity(card);
+
+    const prev = card.dataset.ctIdentity;
+    if (prev && prev !== identity) {
+      card.removeAttribute(WAITING_DONE_ATTR);
+      card.querySelector(".ct-sidebar-tags")?.remove();
+    }
+
+    if (card.getAttribute(WAITING_DONE_ATTR)) return;
+
+    if (!identity) {
+      card.setAttribute(WAITING_DONE_ATTR, "1");
+      return;
+    }
+
+    card.setAttribute(WAITING_DONE_ATTR, "1");
+    card.dataset.ctIdentity = identity;
+    injectSidebarTags(card, identity);
+  });
+}
+
 async function injectSidebarTags(card, identity) {
   let tags = tagsCache.get(identity);
 
@@ -443,7 +562,14 @@ function renderSidebarChips(card, identity, tags) {
     wrap.appendChild(more);
   }
 
-  card.appendChild(wrap);
+  // Inserir após a linha do nome (entre nome e preview da mensagem)
+  const contentCol = card.querySelector("section.ticket-content > div.flex-column");
+  const nameRow    = contentCol?.firstElementChild;
+  if (nameRow) {
+    nameRow.insertAdjacentElement("afterend", wrap);
+  } else {
+    card.appendChild(wrap); // fallback caso a estrutura mude
+  }
 }
 
 /**
@@ -451,14 +577,23 @@ function renderSidebarChips(card, identity, tags) {
  * no sidebar se ele estiver visível.
  */
 function refreshSidebarCard(identity) {
+  // Lista de atendimentos ativos
   const vueIdentities = getVueTickets();
-  const cards = [...document.querySelectorAll(SIDEBAR_CARD_SEL)];
+  const activeCards = [...document.querySelectorAll(SIDEBAR_CARD_SEL)];
 
   const index = vueIdentities.indexOf(identity);
-  if (index !== -1 && cards[index]) {
-    cards[index].removeAttribute(SIDEBAR_DONE_ATTR);
-    injectSidebarTags(cards[index], identity);
+  if (index !== -1 && activeCards[index]) {
+    activeCards[index].removeAttribute(SIDEBAR_DONE_ATTR);
+    injectSidebarTags(activeCards[index], identity);
   }
+
+  // Fila de espera
+  document.querySelectorAll(WAITING_CARD_SEL).forEach((card) => {
+    if (card.dataset.ctIdentity === identity) {
+      card.removeAttribute(WAITING_DONE_ATTR);
+      injectSidebarTags(card, identity);
+    }
+  });
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -494,7 +629,8 @@ function extractIdentity(el) {
   // (ignora @tunnel.msging.net e outros subdomínios que não correspondem ao banco)
   const waPattern = /[\w.+%-]+@wa\.gw\.msging\.net/i;
 
-  const textMatch = (el.innerText || "").match(waPattern);
+  // textContent não força reflow (ao contrário de innerText)
+  const textMatch = (el.textContent || "").match(waPattern);
   if (textMatch) return textMatch[0];
 
   for (const child of el.querySelectorAll?.("[src],[href]") ?? []) {
@@ -536,9 +672,9 @@ function extractPhone(el) {
     }
   }
 
-  // c. Texto visível — padrões telefônicos brasileiros
+  // c. Texto — padrões telefônicos brasileiros
   //    +55 XX XXXXX-XXXX | (XX) XXXXX-XXXX | 55XXXXXXXXXXX
-  const text = el.innerText || "";
+  const text = el.textContent || "";
   const phoneRegex = /(?:\+?55[\s.-]?)?(?:\(?\d{2}\)?[\s.-]?)?\d{4,5}[\s.-]?\d{4}/g;
   for (const match of text.matchAll(phoneRegex)) {
     const normalized = normalizePhone(match[0].replace(/\D/g, ""));
@@ -596,7 +732,7 @@ function showDropdown(dropdown, tags, createLabel, input, identity) {
     dropdown.appendChild(buildOption(`Criar "${createLabel}"`, null, true, () => {
       hideDropdown(dropdown);
       input.value = "";
-      createAndAdd(identity, createLabel.toLowerCase());
+      showColorPicker(input.closest(".ct-autocomplete-wrap"), createLabel.toLowerCase(), identity);
     }));
   }
 

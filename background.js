@@ -28,7 +28,7 @@ async function handleRequest({ action, ...args }) {
     case "CREATE_TAG":
       return apiFetch("/api/tags", {
         method: "POST",
-        body: { tags: [args.name] },
+        body: { tags: [args.name], ...(args.color ? { color: args.color } : {}) },
       });
 
     default:
@@ -45,7 +45,12 @@ async function apiFetch(path, { method = "GET", body } = {}) {
 
   const json = await res.json().catch(() => ({}));
 
-  if (!res.ok) throw new Error(json.error || `Erro ${res.status}`);
+  if (!res.ok) {
+    const errMsg = typeof json.error === "object"
+      ? JSON.stringify(json.error)
+      : (json.error || `Erro ${res.status}`);
+    throw new Error(errMsg);
+  }
 
   return json;
 }
