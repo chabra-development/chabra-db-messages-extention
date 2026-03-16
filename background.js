@@ -1,4 +1,4 @@
-const API_BASE = "https://chabra-db-messages.vercel.app";
+const API_BASE = "https://chabra-db-messages-extention.vercel.app";
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   if (message.type !== "TAGS_REQUEST") return;
