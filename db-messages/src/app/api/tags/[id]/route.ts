@@ -63,19 +63,13 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 }
 
 const putSchema = z.object({
-  tagIds: z.array(z.uuid()).default([]),
+  tagIds: z.array(z.string()).default([]),
 });
 
 export async function PUT(req: NextRequest, { params }: Params) {
   const { id: contactId } = await params;
 
-  const body = await req.json().catch(() => null);
-  if (!body) {
-    return NextResponse.json(
-      { error: "Body inválido ou ausente." },
-      { status: 400 },
-    );
-  }
+  const body = await req.json().catch(() => ({}));
   const parsed = putSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
