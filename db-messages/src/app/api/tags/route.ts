@@ -40,20 +40,27 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json().catch(() => null);
-  const parsed = postSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: parsed.error.flatten().fieldErrors },
-      { status: 400 },
-    );
+  let tags: string[] = [];
+  let color: string | undefined;
+  try {
+    const body = await req.json();
+    if (Array.isArray(body?.tags)) {
+      tags = (body.tags as unknown[]).filter(
+        (t): t is string => typeof t === "string" && t.length > 0,
+      );
+    }
+    if (typeof body?.color === "string") color = body.color;
+  } catch {
+    /* fall through with empty tags */
   }
 
-  const { tags, color } = parsed.data;
+  if (tags.length === 0) {
+    return NextResponse.json({ error: "tags é obrigatório" }, { status: 400 });
+  }
   const created = await Promise.all(
     tags.map((name) =>
       prisma.tag.upsert({
-        where:  { name: name.toLowerCase() },
+        where: { name: name.toLowerCase() },
         update: color ? { color } : {},
         create: { name: name.toLowerCase(), ...(color ? { color } : {}) },
       }),

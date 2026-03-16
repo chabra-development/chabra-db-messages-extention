@@ -62,20 +62,19 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   return NextResponse.json(tag, { status: 200 });
 }
 
-const putSchema = z.object({
-  tagIds: z.array(z.string()).default([]),
-});
-
 export async function PUT(req: NextRequest, { params }: Params) {
   const { id: contactId } = await params;
 
-  const body = await req.json().catch(() => ({}));
-  const parsed = putSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json(
-      { error: parsed.error.flatten().fieldErrors },
-      { status: 400 },
-    );
+  let tagIds: string[] = [];
+  try {
+    const body = await req.json();
+    if (Array.isArray(body?.tagIds)) {
+      tagIds = (body.tagIds as unknown[]).filter(
+        (id): id is string => typeof id === "string",
+      );
+    }
+  } catch {
+    /* empty body → empty tagIds */
   }
 
   const contact = await findContact(contactId);
@@ -86,8 +85,6 @@ export async function PUT(req: NextRequest, { params }: Params) {
       { status: 404 },
     );
   }
-
-  const { tagIds } = parsed.data;
 
   await prisma.$transaction([
     prisma.contactTag.deleteMany({ where: { contactId: contact.id } }),
