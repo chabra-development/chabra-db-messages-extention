@@ -37,15 +37,26 @@ async function handleRequest({ action, ...args }) {
 }
 
 async function apiFetch(path, { method = "GET", body } = {}) {
-  const res = await fetch(`${API_BASE}${path}`, {
+  const url = `${API_BASE}${path}`;
+  const reqBody = body ? JSON.stringify(body) : undefined;
+
+  const res = await fetch(url, {
     method,
     headers: body ? { "Content-Type": "application/json" } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
+    body: reqBody,
   });
 
-  const json = await res.json().catch(() => ({}));
+  let rawText = "";
+  let json = {};
+  try {
+    rawText = await res.text();
+    json = JSON.parse(rawText);
+  } catch {
+    json = {};
+  }
 
   if (!res.ok) {
+    console.error(`[TAGS API] ${method} ${url} → ${res.status}\nReq: ${reqBody}\nRes: ${rawText}`);
     const errMsg = typeof json.error === "object"
       ? JSON.stringify(json.error)
       : (json.error || `Erro ${res.status}`);
