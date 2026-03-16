@@ -2,6 +2,16 @@ import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS });
+}
+
 const querySchema = z.object({
   take: z.coerce.number().int().positive().optional(),
   skip: z.coerce.number().int().nonnegative().optional(),
@@ -21,7 +31,7 @@ export async function GET(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json(
       { error: parsed.error.flatten().fieldErrors },
-      { status: 400 },
+      { status: 400, headers: CORS },
     );
   }
 
@@ -36,7 +46,7 @@ export async function GET(req: NextRequest) {
     orderBy: { name: "asc" },
   });
 
-  return NextResponse.json(tags, { status: 200 });
+  return NextResponse.json(tags, { status: 200, headers: CORS });
 }
 
 export async function POST(req: NextRequest) {
@@ -55,7 +65,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (tags.length === 0) {
-    return NextResponse.json({ error: "tags é obrigatório" }, { status: 400 });
+    return NextResponse.json({ error: "tags é obrigatório" }, { status: 400, headers: CORS });
   }
   const created = await Promise.all(
     tags.map((name) =>
@@ -67,5 +77,5 @@ export async function POST(req: NextRequest) {
     ),
   );
 
-  return NextResponse.json(created, { status: 201 });
+  return NextResponse.json(created, { status: 201, headers: CORS });
 }

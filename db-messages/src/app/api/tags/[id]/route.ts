@@ -2,8 +2,18 @@ import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
 interface Params {
   params: Promise<{ id: string }>;
+}
+
+export async function OPTIONS() {
+  return new NextResponse(null, { status: 204, headers: CORS });
 }
 
 async function findContact(contactId: string) {
@@ -23,7 +33,7 @@ export async function GET(_: NextRequest, { params }: Params) {
   if (!contact) {
     return NextResponse.json(
       { error: "Não foi encontrado o contato selecionado." },
-      { status: 404 },
+      { status: 404, headers: CORS },
     );
   }
 
@@ -35,7 +45,7 @@ export async function GET(_: NextRequest, { params }: Params) {
     },
   });
 
-  return NextResponse.json(tags, { status: 200 });
+  return NextResponse.json(tags, { status: 200, headers: CORS });
 }
 
 const patchSchema = z.object({
@@ -50,7 +60,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   if (!parsed.success) {
     return NextResponse.json(
       { error: parsed.error.flatten().fieldErrors },
-      { status: 400 },
+      { status: 400, headers: CORS },
     );
   }
 
@@ -59,7 +69,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     data: { color: parsed.data.color },
   });
 
-  return NextResponse.json(tag, { status: 200 });
+  return NextResponse.json(tag, { status: 200, headers: CORS });
 }
 
 export async function PUT(req: NextRequest, { params }: Params) {
@@ -82,7 +92,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
   if (!contact) {
     return NextResponse.json(
       { error: "Não foi encontrado o contato selecionado." },
-      { status: 404 },
+      { status: 404, headers: CORS },
     );
   }
 
@@ -102,5 +112,5 @@ export async function PUT(req: NextRequest, { params }: Params) {
     where: { contacts: { some: { contactId: contact.id } } },
   });
 
-  return NextResponse.json(tags, { status: 200 });
+  return NextResponse.json(tags, { status: 200, headers: CORS });
 }
