@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "seed": "bun --env-file=.env src/seed.ts",
-    "build": "prisma db push --schema=./prisma/schema; next build",
+    "build": "prisma migrate deploy && prisma generate && next build",
     "db:deploy": "prisma migrate deploy --schema=./prisma/schema",
     "start": "next start",
     "lint": "biome check",
